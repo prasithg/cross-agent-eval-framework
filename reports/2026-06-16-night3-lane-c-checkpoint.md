@@ -24,7 +24,7 @@ That is the intended behavior. This is no longer a hype packet; it can now rejec
 
 - Public repo: `https://github.com/prasithg/cross-agent-eval-framework`
 - Branch: `main`
-- Verified pushed SHA: `e7ae5e6e75de3a3aec554c3429d20310113fcea6`
+- Verified pushed branch: `git ls-remote origin refs/heads/main` matched local `git rev-parse HEAD` after push (exact final SHA reported in cron summary).
 
 ## Exact validation commands run
 
