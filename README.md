@@ -40,6 +40,17 @@ No production secrets are required. The scorer does not execute recorded session
 cross-agent-score SCORECARD.json [SCORECARD2.json ...] --strict --json
 ```
 
+For CI/cron jobs with network access, add live remote proof:
+
+```bash
+cross-agent-score SCORECARD.json --strict --verify-remote
+```
+
+`--verify-remote` runs `git ls-remote <remote_url> HEAD` for each lane that claims
+`remote_sha_verified: true` and fails if the recorded `head_sha` is stale or not
+the remote HEAD. Offline mode still validates the schema and evidence consistency
+without touching the network.
+
 Exit codes:
 
 - `0`: every scorecard is valid under selected rules;

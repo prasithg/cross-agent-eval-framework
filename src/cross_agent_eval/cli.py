@@ -13,6 +13,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("scorecards", nargs="+", help="Scorecard JSON files to evaluate")
     parser.add_argument("--strict", action="store_true", default=False, help="Enforce evidence consistency rules")
     parser.add_argument("--no-legacy-v02", action="store_true", help="Reject legacy schema_version 0.2 files")
+    parser.add_argument(
+        "--verify-remote",
+        action="store_true",
+        help="Run git ls-remote for claimed remote_sha_verified lanes (network required)",
+    )
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON only")
     return parser
 
@@ -24,7 +29,12 @@ def main(argv: list[str] | None = None) -> int:
     for raw_path in args.scorecards:
         path = Path(raw_path)
         data = load_json(path)
-        result = score_scorecard(data, strict=args.strict, allow_v02=not args.no_legacy_v02)
+        result = score_scorecard(
+            data,
+            strict=args.strict,
+            allow_v02=not args.no_legacy_v02,
+            verify_remote=args.verify_remote,
+        )
         payload = {
             "file": str(path),
             "valid": result.valid,

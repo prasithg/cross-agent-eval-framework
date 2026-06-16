@@ -89,6 +89,25 @@ def _run(cmd: list[str], cwd: str | None = None) -> tuple[int, str]:
         return 999, f"{type(exc).__name__}: {exc}"
 
 
+def _verify_remote_head(remote_url: str, expected_sha: str) -> tuple[bool, str]:
+    """Verify that a claimed SHA is reachable from the remote's HEAD ref.
+
+    This is intentionally opt-in because it shells out and may touch the network.
+    The default scorer remains deterministic/offline, while cron/CI can add
+    `--verify-remote` to stop scorecards from passing on a self-reported
+    `remote_sha_verified: true` boolean.
+    """
+    code, out = _run(["git", "ls-remote", remote_url, "HEAD"])
+    if code != 0:
+        return False, f"git ls-remote failed: {out[:300]}"
+    actual_sha = out.split()[0] if out.split() else ""
+    if not actual_sha:
+        return False, "git ls-remote returned no HEAD SHA"
+    if actual_sha != expected_sha:
+        return False, f"remote HEAD {actual_sha} != claimed {expected_sha}"
+    return True, f"remote HEAD verified: {actual_sha}"
+
+
 def count_files(path: Path) -> int:
     if path.is_file():
         return 1
@@ -167,11 +186,15 @@ def _validate_shape(data: dict[str, Any], *, allow_v02: bool) -> list[str]:
     return errors
 
 
-def validate_scorecard(data: dict[str, Any], *, strict: bool = True, allow_v02: bool = True) -> list[str]:
+def validate_scorecard(
+    data: dict[str, Any], *, strict: bool = True, allow_v02: bool = True, verify_remote: bool = False
+) -> list[str]:
     """Return validation errors. Empty list means valid.
 
     `strict=True` enforces evidence consistency, not just schema shape.
     `allow_v02=True` accepts imported Night2 v0.2 examples but still computes strict scores.
+    `verify_remote=True` additionally runs `git ls-remote` for lanes that claim
+    remote SHA verification. Use it in CI/cron when network is available.
     """
     errors = _validate_shape(data, allow_v02=allow_v02)
     if errors and not strict:
@@ -216,6 +239,10 @@ def validate_scorecard(data: dict[str, Any], *, strict: bool = True, allow_v02: 
                 errors.append(f"lane {i} not_applicable QA must explain package/CLI/non-web reason")
         if git.get("remote_sha_verified") and not (git.get("remote_url") and git.get("head_sha")):
             errors.append(f"lane {i} cannot claim remote_sha_verified without remote_url and head_sha")
+        if verify_remote and git.get("remote_sha_verified") and git.get("remote_url") and git.get("head_sha"):
+            ok, detail = _verify_remote_head(str(git["remote_url"]), str(git["head_sha"]))
+            if not ok:
+                errors.append(f"lane {i} remote verification failed: {detail}")
 
     if scores and scores.get("total_points", computed["total_points"]) > computed["total_points"]:
         errors.append(f"claimed total_points {scores.get('total_points')} exceeds computed strict total {computed['total_points']}")
@@ -348,8 +375,10 @@ def summarize(data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def score_scorecard(data: dict[str, Any], *, strict: bool = True, allow_v02: bool = True) -> ScoreResult:
-    errors = validate_scorecard(data, strict=strict, allow_v02=allow_v02)
+def score_scorecard(
+    data: dict[str, Any], *, strict: bool = True, allow_v02: bool = True, verify_remote: bool = False
+) -> ScoreResult:
+    errors = validate_scorecard(data, strict=strict, allow_v02=allow_v02, verify_remote=verify_remote)
     return ScoreResult(
         valid=not errors,
         errors=errors,

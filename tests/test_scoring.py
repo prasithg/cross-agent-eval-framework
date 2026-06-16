@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import cross_agent_eval.scoring as scoring
 from cross_agent_eval.scoring import compute_scores, score_scorecard, validate_scorecard
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,3 +72,32 @@ def test_compute_caps_do_not_overflow():
     assert scores["runnable_commands"] == 20
     assert scores["tests_with_assertions"] == 20
     assert scores["total_points"] <= 100
+
+
+def test_verify_remote_head_passes_when_ls_remote_matches(monkeypatch):
+    data = load("fixtures/positive/minimal_shipped_cli.json")
+    expected = data["lanes"][0]["git"]["head_sha"]
+
+    original_run = scoring._run
+
+    def fake_run(cmd, cwd=None):
+        if cmd[:2] == ["git", "ls-remote"]:
+            assert cmd[-1] == "HEAD"
+            return 0, f"{expected}\tHEAD"
+        return original_run(cmd, cwd=cwd)
+
+    monkeypatch.setattr(scoring, "_run", fake_run)
+    result = score_scorecard(data, strict=True, verify_remote=True)
+    assert result.valid, result.errors
+
+
+def test_verify_remote_head_rejects_stale_claim(monkeypatch):
+    data = load("fixtures/positive/minimal_shipped_cli.json")
+
+    def fake_run(cmd, cwd=None):
+        return 0, "deadbeef\tHEAD"
+
+    monkeypatch.setattr(scoring, "_run", fake_run)
+    errors = validate_scorecard(data, strict=True, verify_remote=True)
+    assert any("remote verification failed" in error for error in errors)
+    assert any("remote HEAD deadbeef" in error for error in errors)
