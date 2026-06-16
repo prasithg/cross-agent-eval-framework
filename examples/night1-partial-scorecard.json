@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.2",
+  "session_id": "night1-2026-06-13-to-2026-06-14",
+  "session_name": "Monster Work Session Night 1",
+  "date": "2026-06-14",
+  "duration_hours": 8.8,
+  "agents": ["HermesPras", "PrasClaw"],
+  "guardrails": {
+    "allowed_execution_tools": ["local/shared artifacts", "public research", "sanitized summaries", "drafts", "Dropbox handoffs", "Discord doorbells as Hermes"],
+    "gated_actions": ["public posting", "commits/pushes/deploys under the then-active rule", "purchases", "secrets or credential changes", "destructive deletes", "speaking as Pras"],
+    "privacy_notes": "Night 1 used stricter guardrails; no public posting, commits, pushes, deploys, deletes, secret changes, or messages as Pras."
+  },
+  "lanes": [
+    {
+      "lane_id": "N1_A",
+      "name": "cron-health-sentinel prototype v0.1",
+      "artifact_paths": ["/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session/cron-health-sentinel-prototype-v0.1"],
+      "commands_run": ["PYTHONPATH=src python3 -m unittest discover -s tests", "PYTHONPATH=src python3 -m cron_health_sentinel.scanner fixtures/cases.json F03"],
+      "tests": {
+        "status": "pass",
+        "assertion_count": 4,
+        "output_summary": "4 unittest tests OK; expected alert case exited with CONSECUTIVE_ERRORS and writesPlanned:false."
+      },
+      "git": {
+        "repo_path": null,
+        "remote_url": null,
+        "head_sha": null,
+        "remote_sha_verified": false
+      },
+      "deploy_or_live_qa": {
+        "status": "pass",
+        "evidence": "Local dry-run scanner demo only; no live notifier sends."
+      },
+      "handoff_lint": {
+        "status": "not_run",
+        "evidence": "Handoff-lint was a product direction, not yet implemented as a CLI."
+      },
+      "external_review_delta": "PrasClaw corrected scheduler assumptions and pushed from agent-doorbell messaging toward handoff-lint/sentinel enforcement.",
+      "verdict": "validated"
+    },
+    {
+      "lane_id": "N1_B",
+      "name": "agent-doorbell / handoff-lint design packet",
+      "artifact_paths": [
+        "/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session/agent-doorbell-readme-and-eval-plan-v0.1.md",
+        "/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session/agent-doorbell-validate-spec-v0.2.md",
+        "/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session/agent-doorbell-fixtures-v0.1.md"
+      ],
+      "commands_run": [],
+      "tests": {
+        "status": "not_run",
+        "assertion_count": 0,
+        "output_summary": "Spec/fixture packet only; no runnable validator yet."
+      },
+      "git": {
+        "repo_path": null,
+        "remote_url": null,
+        "head_sha": null,
+        "remote_sha_verified": false
+      },
+      "deploy_or_live_qa": {
+        "status": "not_attempted",
+        "evidence": "No public/demo deploy; approval-gated local artifacts only."
+      },
+      "handoff_lint": {
+        "status": "not_run",
+        "evidence": "Validator did not exist yet."
+      },
+      "external_review_delta": "Claw objected that handoff enforcement was sharper than doorbell messaging; this shaped Night2 Lane C.",
+      "verdict": "drafted"
+    },
+    {
+      "lane_id": "N1_C",
+      "name": "green CI is not a deploy content packet",
+      "artifact_paths": [
+        "/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session/green-ci-is-not-a-deploy-content-drafts-2026-06-13.md",
+        "/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session/green-ci-is-not-a-deploy-linkedin-patched-2026-06-13.md"
+      ],
+      "commands_run": [],
+      "tests": {
+        "status": "not_applicable",
+        "assertion_count": 0,
+        "output_summary": "Approval-gated writing artifact; no posting."
+      },
+      "git": {
+        "repo_path": null,
+        "remote_url": null,
+        "head_sha": null,
+        "remote_sha_verified": false
+      },
+      "deploy_or_live_qa": {
+        "status": "not_applicable",
+        "evidence": "Content draft only; public posting gated."
+      },
+      "handoff_lint": {
+        "status": "not_applicable",
+        "evidence": "Content lane."
+      },
+      "external_review_delta": "PrasClaw supplied the production-pain framing and anti-slop review for the LinkedIn draft.",
+      "verdict": "drafted"
+    }
+  ],
+  "objective_scores": {
+    "runnable_commands": 14,
+    "tests_with_assertions": 16,
+    "commit_push_evidence": 4,
+    "deploy_or_live_qa": 6,
+    "handoff_lint_signal": 10,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "total_points": 65,
+    "max_points": 100
+  },
+  "failure_signals": [
+    "No commits/pushes/deploys happened under the then-active overly conservative rule.",
+    "Code came late after too much markdown/spec production.",
+    "Claw token/run instrumentation was unavailable."
+  ],
+  "overall_verdict": "mixed",
+  "approval_queue": [
+    "Decide whether cron-health-sentinel should become a clean package.",
+    "Approve or reject Green-CI content draft.",
+    "Instrument Claw-side token/run stats for future evals."
+  ],
+  "notes": "Partial reconstruction from the 2026-06-14 morning report and local artifacts."
+}

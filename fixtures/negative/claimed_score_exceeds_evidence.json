@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.3",
+  "session_id": "claimed-score-exceeds-evidence",
+  "session_name": "Claimed Score Exceeds Evidence",
+  "date": "2026-06-16",
+  "agents": ["HermesPras"],
+  "guardrails": {"allowed_execution_tools": ["local tests"], "gated_actions": ["secrets"], "privacy_notes": "Synthetic fixture."},
+  "lanes": [
+    {
+      "lane_id": "A",
+      "name": "thin-draft",
+      "artifact_paths": [],
+      "commands_run": [],
+      "tests": {"status": "not_run", "assertion_count": 0, "output_summary": "No tests."},
+      "git": {"repo_path": null, "remote_url": null, "head_sha": null, "remote_sha_verified": false},
+      "deploy_or_live_qa": {"status": "not_attempted", "evidence": "None."},
+      "handoff_lint": {"status": "not_run", "evidence": "None."},
+      "external_review_delta": "",
+      "verdict": "drafted"
+    }
+  ],
+  "failure_signals": ["Negative fixture should fail because claimed score is inflated."],
+  "overall_verdict": "mixed",
+  "objective_scores": {
+    "runnable_commands": 20,
+    "tests_with_assertions": 20,
+    "commit_push_evidence": 20,
+    "deploy_or_live_qa": 15,
+    "handoff_lint_signal": 10,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "total_points": 100,
+    "max_points": 100
+  }
+}

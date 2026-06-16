@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.3",
+  "session_id": "positive-minimal",
+  "session_name": "Positive Minimal Shipped CLI Session",
+  "date": "2026-06-16",
+  "duration_hours": 1.0,
+  "agents": ["HermesPras"],
+  "guardrails": {
+    "allowed_execution_tools": ["local tests", "commit", "push"],
+    "gated_actions": ["secrets", "public posting"],
+    "privacy_notes": "Synthetic fixture; no private data."
+  },
+  "lanes": [
+    {
+      "lane_id": "A",
+      "name": "shipped-cli-with-remote-evidence",
+      "artifact_paths": ["README.md"],
+      "commands_run": ["python -m pytest -q", "cross-agent-score fixture.json --strict"],
+      "tests": {"status": "pass", "assertion_count": 8, "output_summary": "8 tests passed including negative controls."},
+      "git": {
+        "repo_path": ".",
+        "remote_url": "https://github.com/prasithg/example-agent-tool",
+        "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "remote_sha_verified": true
+      },
+      "deploy_or_live_qa": {"status": "not_applicable", "evidence": "CLI package/library QA only; no web deploy surface exists for this fixture."},
+      "handoff_lint": {"status": "mixed", "evidence": "Negative fixture intentionally failed the linter."},
+      "external_review_delta": "Reviewer forced stricter remote evidence and negative controls.",
+      "verdict": "shipped"
+    }
+  ],
+  "failure_signals": ["Intentional negative fixture failed before the positive fixture passed."],
+  "overall_verdict": "useful",
+  "notes": "Positive fixture for scorer tests."
+}

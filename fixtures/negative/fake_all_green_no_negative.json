@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.3",
+  "session_id": "fake-all-green-no-negative",
+  "session_name": "Fake All Green Session",
+  "date": "2026-06-16",
+  "agents": ["HermesPras"],
+  "guardrails": {"allowed_execution_tools": ["local tests"], "gated_actions": ["secrets"], "privacy_notes": "Synthetic fixture."},
+  "lanes": [
+    {
+      "lane_id": "A",
+      "name": "looks-good-but-not-shipped",
+      "artifact_paths": ["/tmp/not-real-artifact-path"],
+      "commands_run": ["echo tests passed"],
+      "tests": {"status": "pass", "assertion_count": 1, "output_summary": "Narrative claim only."},
+      "git": {"repo_path": null, "remote_url": null, "head_sha": null, "remote_sha_verified": false},
+      "deploy_or_live_qa": {"status": "not_attempted", "evidence": "None."},
+      "handoff_lint": {"status": "not_run", "evidence": "None."},
+      "external_review_delta": "",
+      "verdict": "drafted"
+    }
+  ],
+  "failure_signals": [],
+  "overall_verdict": "strong",
+  "objective_scores": {
+    "runnable_commands": 20,
+    "tests_with_assertions": 20,
+    "commit_push_evidence": 20,
+    "deploy_or_live_qa": 15,
+    "handoff_lint_signal": 10,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "total_points": 100,
+    "max_points": 100
+  }
+}

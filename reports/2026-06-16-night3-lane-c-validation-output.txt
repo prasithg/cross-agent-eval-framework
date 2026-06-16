@@ -1,0 +1,258 @@
+Tue Jun 16 00:15:53 EDT 2026
+## pytest
+.........                                                                [100%]
+## positive fixture
+{
+  "claimed_scores": {},
+  "computed_scores": {
+    "commit_push_evidence": 5,
+    "deploy_or_live_qa": 2,
+    "external_review_delta": 3,
+    "failure_signal_present": 5,
+    "handoff_lint_signal": 5,
+    "max_points": 100,
+    "runnable_commands": 8,
+    "tests_with_assertions": 12,
+    "total_points": 40
+  },
+  "errors": [],
+  "file": "fixtures/positive/minimal_shipped_cli.json",
+  "summary": {
+    "claimed_score": null,
+    "computed_score": "40/100",
+    "lanes": [
+      {
+        "actual_head": null,
+        "artifact_files_counted": 1,
+        "assertion_count": 8,
+        "commands_recorded": 2,
+        "existing_artifact_paths": 1,
+        "git_status": "repo_path_missing_git",
+        "lane_id": "A",
+        "name": "shipped-cli-with-remote-evidence",
+        "remote_status": "not_checked",
+        "verdict": "shipped"
+      }
+    ],
+    "overall_verdict": "useful",
+    "session_id": "positive-minimal",
+    "session_name": "Positive Minimal Shipped CLI Session",
+    "totals": {
+      "artifact_files_counted": 1,
+      "failure_signals": 1,
+      "git_repos_detected": 0,
+      "lanes": 1,
+      "missing_paths": [],
+      "remote_sha_verified_claims": 0
+    }
+  },
+  "valid": true
+}
+## negative fake all green (expected fail)
+{
+  "claimed_scores": {
+    "commit_push_evidence": 20,
+    "deploy_or_live_qa": 15,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "handoff_lint_signal": 10,
+    "max_points": 100,
+    "runnable_commands": 20,
+    "tests_with_assertions": 20,
+    "total_points": 100
+  },
+  "computed_scores": {
+    "commit_push_evidence": 0,
+    "deploy_or_live_qa": 0,
+    "external_review_delta": 0,
+    "failure_signal_present": 0,
+    "handoff_lint_signal": 0,
+    "max_points": 100,
+    "runnable_commands": 4,
+    "tests_with_assertions": 5,
+    "total_points": 9
+  },
+  "errors": [
+    "strong verdict requires at least one failure signal / negative control",
+    "strong verdict requires a concrete negative-control/failure signal",
+    "claimed total_points 100 exceeds computed strict total 9"
+  ],
+  "file": "fixtures/negative/fake_all_green_no_negative.json",
+  "summary": {
+    "claimed_score": "100/100",
+    "computed_score": "9/100",
+    "lanes": [
+      {
+        "actual_head": null,
+        "artifact_files_counted": 0,
+        "assertion_count": 1,
+        "commands_recorded": 1,
+        "existing_artifact_paths": 0,
+        "git_status": "not_applicable",
+        "lane_id": "A",
+        "name": "looks-good-but-not-shipped",
+        "remote_status": "not_checked",
+        "verdict": "drafted"
+      }
+    ],
+    "overall_verdict": "strong",
+    "session_id": "fake-all-green-no-negative",
+    "session_name": "Fake All Green Session",
+    "totals": {
+      "artifact_files_counted": 0,
+      "failure_signals": 0,
+      "git_repos_detected": 0,
+      "lanes": 1,
+      "missing_paths": [
+        "/tmp/not-real-artifact-path"
+      ],
+      "remote_sha_verified_claims": 0
+    }
+  },
+  "valid": false
+}
+## negative shipped without remote (expected fail)
+{
+  "claimed_scores": {},
+  "computed_scores": {
+    "commit_push_evidence": 0,
+    "deploy_or_live_qa": 0,
+    "external_review_delta": 3,
+    "failure_signal_present": 5,
+    "handoff_lint_signal": 0,
+    "max_points": 100,
+    "runnable_commands": 4,
+    "tests_with_assertions": 7,
+    "total_points": 19
+  },
+  "errors": [
+    "lane 0 verdict=shipped requires repo_path, remote_url, head_sha, and remote_sha_verified=true",
+    "lane 0 not_applicable QA must explain package/CLI/non-web reason"
+  ],
+  "file": "fixtures/negative/shipped_without_remote.json",
+  "summary": {
+    "claimed_score": null,
+    "computed_score": "19/100",
+    "lanes": [
+      {
+        "actual_head": null,
+        "artifact_files_counted": 1,
+        "assertion_count": 3,
+        "commands_recorded": 1,
+        "existing_artifact_paths": 1,
+        "git_status": "repo_path_missing_git",
+        "lane_id": "A",
+        "name": "local-only-but-called-shipped",
+        "remote_status": "not_checked",
+        "verdict": "shipped"
+      }
+    ],
+    "overall_verdict": "useful",
+    "session_id": "shipped-without-remote",
+    "session_name": "Shipped Claim Missing Remote Evidence",
+    "totals": {
+      "artifact_files_counted": 1,
+      "failure_signals": 1,
+      "git_repos_detected": 0,
+      "lanes": 1,
+      "missing_paths": [],
+      "remote_sha_verified_claims": 0
+    }
+  },
+  "valid": false
+}
+## imported Night2 v0.2 under strict scorer (expected fail because claimed > computed)
+{
+  "claimed_scores": {
+    "commit_push_evidence": 20,
+    "deploy_or_live_qa": 14,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "handoff_lint_signal": 10,
+    "max_points": 100,
+    "runnable_commands": 20,
+    "tests_with_assertions": 20,
+    "total_points": 99
+  },
+  "computed_scores": {
+    "commit_push_evidence": 15,
+    "deploy_or_live_qa": 12,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "handoff_lint_signal": 5,
+    "max_points": 100,
+    "runnable_commands": 20,
+    "tests_with_assertions": 20,
+    "total_points": 87
+  },
+  "errors": [
+    "claimed total_points 99 exceeds computed strict total 87"
+  ],
+  "file": "examples/night2-partial-scorecard.json",
+  "summary": {
+    "claimed_score": "99/100",
+    "computed_score": "87/100",
+    "lanes": [
+      {
+        "actual_head": "1f0ef723acbaefd3b6eac5ce5ecd39fa9a2acef3",
+        "artifact_files_counted": 7,
+        "assertion_count": 5,
+        "commands_recorded": 3,
+        "existing_artifact_paths": 2,
+        "git_status": "clean",
+        "lane_id": "A",
+        "name": "md2deck-hermes-lab",
+        "remote_status": "claimed_verified",
+        "verdict": "shipped"
+      },
+      {
+        "actual_head": "a55d706ece4326a5610a1ad62a1dc083d17909ec",
+        "artifact_files_counted": 12,
+        "assertion_count": 38,
+        "commands_recorded": 3,
+        "existing_artifact_paths": 1,
+        "git_status": "clean",
+        "lane_id": "B",
+        "name": "cron-health-sentinel-night2",
+        "remote_status": "claimed_verified",
+        "verdict": "shipped"
+      },
+      {
+        "actual_head": "800cad312b0d7312754fe0bb99f1493f46cf1ab1",
+        "artifact_files_counted": 21,
+        "assertion_count": 6,
+        "commands_recorded": 2,
+        "existing_artifact_paths": 1,
+        "git_status": "clean",
+        "lane_id": "C",
+        "name": "handoff-lint-night2",
+        "remote_status": "claimed_verified",
+        "verdict": "shipped"
+      },
+      {
+        "actual_head": null,
+        "artifact_files_counted": 12,
+        "assertion_count": 2,
+        "commands_recorded": 1,
+        "existing_artifact_paths": 1,
+        "git_status": "not_applicable",
+        "lane_id": "D_E",
+        "name": "eval framework + launch packet",
+        "remote_status": "not_checked",
+        "verdict": "validated"
+      }
+    ],
+    "overall_verdict": "strong",
+    "session_id": "night2-2026-06-14-to-2026-06-15",
+    "session_name": "Monster Work Session Night 2",
+    "totals": {
+      "artifact_files_counted": 52,
+      "failure_signals": 3,
+      "git_repos_detected": 3,
+      "lanes": 4,
+      "missing_paths": [],
+      "remote_sha_verified_claims": 3
+    }
+  },
+  "valid": false
+}

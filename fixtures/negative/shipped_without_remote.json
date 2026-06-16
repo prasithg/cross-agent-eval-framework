@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.3",
+  "session_id": "shipped-without-remote",
+  "session_name": "Shipped Claim Missing Remote Evidence",
+  "date": "2026-06-16",
+  "agents": ["HermesPras"],
+  "guardrails": {"allowed_execution_tools": ["commit"], "gated_actions": ["secrets"], "privacy_notes": "Synthetic fixture."},
+  "lanes": [
+    {
+      "lane_id": "A",
+      "name": "local-only-but-called-shipped",
+      "artifact_paths": ["README.md"],
+      "commands_run": ["python -m pytest -q"],
+      "tests": {"status": "pass", "assertion_count": 3, "output_summary": "Local only."},
+      "git": {"repo_path": ".", "remote_url": null, "head_sha": "bbbbbbb", "remote_sha_verified": false},
+      "deploy_or_live_qa": {"status": "not_applicable", "evidence": "No reason."},
+      "handoff_lint": {"status": "not_applicable", "evidence": "N/A."},
+      "external_review_delta": "Reviewer said remote evidence matters.",
+      "verdict": "shipped"
+    }
+  ],
+  "failure_signals": ["Negative test confirms shipped-without-remote is rejected."],
+  "overall_verdict": "useful"
+}

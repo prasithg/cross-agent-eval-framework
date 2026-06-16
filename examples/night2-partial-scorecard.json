@@ -1,0 +1,149 @@
+{
+  "schema_version": "0.2",
+  "session_id": "night2-2026-06-14-to-2026-06-15",
+  "session_name": "Monster Work Session Night 2",
+  "date": "2026-06-15",
+  "duration_hours": 8.8,
+  "agents": ["HermesPras", "PrasClaw"],
+  "guardrails": {
+    "allowed_execution_tools": ["commit", "push", "deploy", "live QA", "local tests", "public-safe repo work", "Dropbox handoffs"],
+    "gated_actions": ["purchases", "secrets or credential exposure", "destructive deletes/data loss", "posting or speaking as Pras", "raw private/work/family/medical/financial data"],
+    "privacy_notes": "All content remains approval-gated drafts; no raw secrets/private data included."
+  },
+  "lanes": [
+    {
+      "lane_id": "A",
+      "name": "md2deck-hermes-lab",
+      "artifact_paths": [
+        "/Users/prasithgovin/Development/open-source/md2deck-hermes-lab",
+        "/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session-night2/2026-06-15-live-qa-deploy-sweep.md"
+      ],
+      "commands_run": ["npm run build:sample", "npm test", "curl -L --fail https://prasithg.github.io/md2deck-hermes-lab/sample-deck.html"],
+      "tests": {
+        "status": "pass",
+        "assertion_count": 5,
+        "output_summary": "smoke ok: 5 slides, offline HTML, CLI render verified"
+      },
+      "git": {
+        "repo_path": "/Users/prasithgovin/Development/open-source/md2deck-hermes-lab",
+        "remote_url": "https://github.com/prasithg/md2deck-hermes-lab",
+        "head_sha": "1f0ef723acbaefd3b6eac5ce5ecd39fa9a2acef3",
+        "remote_sha_verified": true
+      },
+      "deploy_or_live_qa": {
+        "status": "pass",
+        "evidence": "GitHub Pages sample deck HTTP 200, 4616 bytes, doctype present, 5 slide nodes, no external http(s)."
+      },
+      "handoff_lint": {
+        "status": "not_applicable",
+        "evidence": "Build-off artifact, not a handoff packet."
+      },
+      "external_review_delta": "PrasClaw requested independent offline md2deck implementation; checkpoint fixed broken build script and revalidated live demo.",
+      "verdict": "shipped"
+    },
+    {
+      "lane_id": "B",
+      "name": "cron-health-sentinel-night2",
+      "artifact_paths": ["/Users/prasithgovin/Development/open-source/cron-health-sentinel-night2"],
+      "commands_run": ["python -m pytest -q", "python -m cron_health_sentinel.scanner validation/live-dry-run-input-2026-06-15.json LIVE_SANITIZED_CRON_LIST", "python -m cron_health_sentinel.scanner fixtures/cases.json F03"],
+      "tests": {
+        "status": "pass",
+        "assertion_count": 38,
+        "output_summary": "10 passed, 38 subtests passed; live sanitized dry-run verdict ok; known alert fixture fires."
+      },
+      "git": {
+        "repo_path": "/Users/prasithgovin/Development/open-source/cron-health-sentinel-night2",
+        "remote_url": "https://github.com/prasithg/cron-health-sentinel-night2",
+        "head_sha": "a55d706ece4326a5610a1ad62a1dc083d17909ec",
+        "remote_sha_verified": true
+      },
+      "deploy_or_live_qa": {
+        "status": "pass",
+        "evidence": "Internal CLI dry-run QA against sanitized live cron list; writesPlanned false; no notifier sends."
+      },
+      "handoff_lint": {
+        "status": "not_applicable",
+        "evidence": "CLI scanner lane; linted handoffs covered by Lane C."
+      },
+      "external_review_delta": "PrasClaw schema critique forced id/name fields, structured schedule, enabled:false skip, run-history-derived status, one-shot handling.",
+      "verdict": "shipped"
+    },
+    {
+      "lane_id": "C",
+      "name": "handoff-lint-night2",
+      "artifact_paths": ["/Users/prasithgovin/Development/open-source/handoff-lint-night2"],
+      "commands_run": ["python -m pytest -q", "PYTHONPATH=src python -m handoff_lint.cli real Agent-Exchange handoffs"],
+      "tests": {
+        "status": "pass",
+        "assertion_count": 6,
+        "output_summary": "6 passed; real archive smoke produced one PASS and two intentional/non-curated FAILs."
+      },
+      "git": {
+        "repo_path": "/Users/prasithgovin/Development/open-source/handoff-lint-night2",
+        "remote_url": "https://github.com/prasithg/handoff-lint-night2",
+        "head_sha": "05a13e2f7d810f93b637a393ac175ab5880756c9",
+        "remote_sha_verified": true
+      },
+      "deploy_or_live_qa": {
+        "status": "not_applicable",
+        "evidence": "CLI/package QA only; no web deploy surface required."
+      },
+      "handoff_lint": {
+        "status": "mixed",
+        "evidence": "Real historical handoffs include intentional failures for missing summary/priority/sensitivity/next-action fields."
+      },
+      "external_review_delta": "PrasClaw warned fake progress risk was high unless raw/non-curated handoffs failed; this lane preserved those failures.",
+      "verdict": "shipped"
+    },
+    {
+      "lane_id": "D_E",
+      "name": "eval framework + launch packet",
+      "artifact_paths": ["/Users/prasithgovin/Dropbox/Agent-Exchange/30_PROJECTS/monster-work-session-night2/eval-framework-v0.2"],
+      "commands_run": ["python3 scripts/score_session.py examples/night1-partial-scorecard.json examples/night2-partial-scorecard.json"],
+      "tests": {
+        "status": "pass",
+        "assertion_count": 2,
+        "output_summary": "Schema/template examples validated by lightweight scorer."
+      },
+      "git": {
+        "repo_path": null,
+        "remote_url": null,
+        "head_sha": null,
+        "remote_sha_verified": false
+      },
+      "deploy_or_live_qa": {
+        "status": "not_applicable",
+        "evidence": "Dropbox framework artifact; no code repo existed at creation time."
+      },
+      "handoff_lint": {
+        "status": "not_run",
+        "evidence": "Review handoff written separately for PrasClaw critique."
+      },
+      "external_review_delta": "Uses Claw's locked objective-only Lane D rubric and all-green suspicion rule.",
+      "verdict": "validated"
+    }
+  ],
+  "objective_scores": {
+    "runnable_commands": 20,
+    "tests_with_assertions": 20,
+    "commit_push_evidence": 20,
+    "deploy_or_live_qa": 14,
+    "handoff_lint_signal": 10,
+    "external_review_delta": 10,
+    "failure_signal_present": 5,
+    "total_points": 99,
+    "max_points": 100
+  },
+  "failure_signals": [
+    "Initial md2deck build:sample path was broken and fixed before live QA.",
+    "System Python lacked pytest/tomllib; rerun with Hermes venv Python passed.",
+    "Real handoff-lint archive smoke intentionally surfaced historical/non-curated failing handoffs."
+  ],
+  "overall_verdict": "strong",
+  "approval_queue": [
+    "Approve md2deck launch post/demo thread after human review.",
+    "Approve whether to package handoff-lint as pipx/GitHub Action next.",
+    "Approve public positioning around cron-health-sentinel if private repo remains private."
+  ],
+  "notes": "Partial scorecard derived from Night2 artifacts available before the final morning scorecard job."
+}
