@@ -20,6 +20,12 @@ Night2 claimed **99/100**. Under the stricter scorer, the same imported scorecar
 
 That is the intended behavior. This is no longer a hype packet; it can now reject inflated summaries.
 
+## GitHub status
+
+- Public repo: `https://github.com/prasithg/cross-agent-eval-framework`
+- Branch: `main`
+- Verified pushed SHA: `e7ae5e6e75de3a3aec554c3429d20310113fcea6`
+
 ## Exact validation commands run
 
 ```bash
