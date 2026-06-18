@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import time
 from pathlib import Path
 
 import cross_agent_eval.scoring as scoring
@@ -101,3 +103,24 @@ def test_verify_remote_head_rejects_stale_claim(monkeypatch):
     errors = validate_scorecard(data, strict=True, verify_remote=True)
     assert any("remote verification failed" in error for error in errors)
     assert any("remote HEAD deadbeef" in error for error in errors)
+
+
+def test_artifact_freshness_gate_rejects_stale_and_missing_paths(tmp_path):
+    data = load("fixtures/positive/minimal_shipped_cli.json")
+    fresh_artifact = tmp_path / "fresh-night4-scorecard.json"
+    stale_artifact = tmp_path / "stale-night3-dashboard.html"
+    missing_artifact = tmp_path / "missing-night4-checkpoint.html"
+    fresh_artifact.write_text("{}")
+    stale_artifact.write_text("<html>old</html>")
+    stale_time = time.time() - (48 * 60 * 60)
+    os.utime(stale_artifact, (stale_time, stale_time))
+    data["lanes"][0]["artifact_paths"] = [
+        str(fresh_artifact),
+        str(stale_artifact),
+        str(missing_artifact),
+    ]
+
+    errors = validate_scorecard(data, strict=True, max_artifact_age_hours=24)
+
+    assert any("artifact path stale" in error and "stale-night3-dashboard.html" in error for error in errors)
+    assert any("artifact path missing" in error and "missing-night4-checkpoint.html" in error for error in errors)

@@ -18,6 +18,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Run git ls-remote for claimed remote_sha_verified lanes (network required)",
     )
+    parser.add_argument(
+        "--max-artifact-age-hours",
+        type=float,
+        help="Fail if any lane artifact path is missing or older than this many hours",
+    )
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON only")
     return parser
 
@@ -34,6 +39,7 @@ def main(argv: list[str] | None = None) -> int:
             strict=args.strict,
             allow_v02=not args.no_legacy_v02,
             verify_remote=args.verify_remote,
+            max_artifact_age_hours=args.max_artifact_age_hours,
         )
         payload = {
             "file": str(path),

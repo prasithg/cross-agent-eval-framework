@@ -51,6 +51,16 @@ cross-agent-score SCORECARD.json --strict --verify-remote
 the remote HEAD. Offline mode still validates the schema and evidence consistency
 without touching the network.
 
+For same-night dashboards/checkpoints, add an artifact freshness gate:
+
+```bash
+cross-agent-score SCORECARD.json --strict --max-artifact-age-hours 24
+```
+
+That fails if any lane artifact path is missing or older than the allowed age. It
+keeps monster-session reports from accidentally reusing stale Night3 dashboards
+or claiming a fresh checkpoint that was never written.
+
 Exit codes:
 
 - `0`: every scorecard is valid under selected rules;
