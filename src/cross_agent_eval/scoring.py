@@ -5,6 +5,7 @@ import json
 import os
 import re
 import subprocess
+import time
 from pathlib import Path
 from typing import Any
 
@@ -108,6 +109,52 @@ def _verify_remote_head(remote_url: str, expected_sha: str) -> tuple[bool, str]:
     return True, f"remote HEAD verified: {actual_sha}"
 
 
+def _newest_mtime(path: Path) -> float | None:
+    """Return newest file mtime for a file/dir artifact, ignoring cache/vendor noise."""
+    try:
+        if path.is_file():
+            return path.stat().st_mtime
+        if not path.is_dir():
+            return None
+        newest = path.stat().st_mtime
+        for root, dirs, files in os.walk(path):
+            dirs[:] = [d for d in dirs if d not in {".git", "node_modules", "__pycache__", ".pytest_cache", ".venv", "venv"}]
+            for name in files:
+                try:
+                    newest = max(newest, (Path(root) / name).stat().st_mtime)
+                except OSError:
+                    continue
+        return newest
+    except OSError:
+        return None
+
+
+def _validate_artifact_freshness(data: dict[str, Any], max_artifact_age_hours: float, *, now_ts: float | None = None) -> list[str]:
+    errors: list[str] = []
+    if max_artifact_age_hours < 0:
+        return ["max_artifact_age_hours must be non-negative"]
+    now = time.time() if now_ts is None else now_ts
+    for i, lane in enumerate(_as_list(data.get("lanes"))):
+        if not isinstance(lane, dict):
+            continue
+        artifacts = _as_list(lane.get("artifact_paths"))
+        if not artifacts:
+            errors.append(f"lane {i} artifact_paths must include at least one path for freshness gate")
+            continue
+        for raw in artifacts:
+            path = Path(str(raw)).expanduser()
+            newest = _newest_mtime(path)
+            if newest is None:
+                errors.append(f"lane {i} artifact path missing: {path}")
+                continue
+            age_hours = max(0.0, (now - newest) / 3600)
+            if age_hours > max_artifact_age_hours:
+                errors.append(
+                    f"lane {i} artifact path stale: {path} age_hours={age_hours:.1f} > max_artifact_age_hours={max_artifact_age_hours:g}"
+                )
+    return errors
+
+
 def count_files(path: Path) -> int:
     if path.is_file():
         return 1
@@ -187,7 +234,12 @@ def _validate_shape(data: dict[str, Any], *, allow_v02: bool) -> list[str]:
 
 
 def validate_scorecard(
-    data: dict[str, Any], *, strict: bool = True, allow_v02: bool = True, verify_remote: bool = False
+    data: dict[str, Any],
+    *,
+    strict: bool = True,
+    allow_v02: bool = True,
+    verify_remote: bool = False,
+    max_artifact_age_hours: float | None = None,
 ) -> list[str]:
     """Return validation errors. Empty list means valid.
 
@@ -195,8 +247,12 @@ def validate_scorecard(
     `allow_v02=True` accepts imported Night2 v0.2 examples but still computes strict scores.
     `verify_remote=True` additionally runs `git ls-remote` for lanes that claim
     remote SHA verification. Use it in CI/cron when network is available.
+    `max_artifact_age_hours=N` additionally fails scorecards whose lane artifacts
+    are missing or older than N hours. Use it for same-night checkpoint/dashboard gates.
     """
     errors = _validate_shape(data, allow_v02=allow_v02)
+    if max_artifact_age_hours is not None:
+        errors.extend(_validate_artifact_freshness(data, max_artifact_age_hours))
     if errors and not strict:
         return errors
 
@@ -376,9 +432,20 @@ def summarize(data: dict[str, Any]) -> dict[str, Any]:
 
 
 def score_scorecard(
-    data: dict[str, Any], *, strict: bool = True, allow_v02: bool = True, verify_remote: bool = False
+    data: dict[str, Any],
+    *,
+    strict: bool = True,
+    allow_v02: bool = True,
+    verify_remote: bool = False,
+    max_artifact_age_hours: float | None = None,
 ) -> ScoreResult:
-    errors = validate_scorecard(data, strict=strict, allow_v02=allow_v02, verify_remote=verify_remote)
+    errors = validate_scorecard(
+        data,
+        strict=strict,
+        allow_v02=allow_v02,
+        verify_remote=verify_remote,
+        max_artifact_age_hours=max_artifact_age_hours,
+    )
     return ScoreResult(
         valid=not errors,
         errors=errors,

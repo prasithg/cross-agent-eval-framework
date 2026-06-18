@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -9,12 +10,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
+    env = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
     return subprocess.run(
         [sys.executable, "-m", "cross_agent_eval.cli", *args],
         cwd=ROOT,
         text=True,
         capture_output=True,
         timeout=15,
+        env=env,
     )
 
 
